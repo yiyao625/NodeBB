@@ -426,6 +426,8 @@ describe('Groups', () => {
 		});
 	});
 
+
+
 	describe('.update()', () => {
 		before((done) => {
 			Groups.create({
@@ -549,6 +551,21 @@ describe('Groups', () => {
 					done();
 				});
 			});
+		});
+
+		it('should update user group titles when group is renamed', async () => {
+			// Add user to the group
+			await Groups.join('updateTestGroup', testUid);
+			// Set initial group title for the user
+			await User.setUserField(testUid, 'groupTitle', JSON.stringify(['updateTestGroup']));
+			// Rename the group
+			await Groups.update('updateTestGroup', { name: 'renamedTestGroup' });
+			// Fetch updated user data
+			const userData = await User.getUserFields(testUid, ['groupTitle']);
+			// Verify the group title has been updated
+			const groupTitles = JSON.parse(userData.groupTitle);
+			assert.strictEqual(groupTitles.includes('renamedTestGroup'), true);
+			assert.strictEqual(groupTitles.includes('updateTestGroup'), false);
 		});
 	});
 
