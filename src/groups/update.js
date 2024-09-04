@@ -226,7 +226,7 @@ module.exports = function (Groups) {
 		await batch.processSortedSet(`group:${oldName}:members`, async (uids) => {
 			let usersData = await user.getUsersData(uids);
 			usersData = usersData.filter(userData => userData && userData.groupTitleArray.includes(oldName));
-
+			console.log('YIYAO WANG yiyaowan');
 			usersData.forEach((userData) => {
 				userData.newTitleArray = updateTitleArray(userData.groupTitleArray, oldName, newName);
 			});
