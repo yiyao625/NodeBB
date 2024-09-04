@@ -184,7 +184,6 @@ module.exports = function (Groups) {
 		if (exists) {
 			throw new Error('[[error:group-already-exists]]');
 		}
-
 		await updateMemberGroupTitles(oldName, newName);
 		await updateNavigationItems(oldName, newName);
 		await updateWidgets(oldName, newName);
@@ -219,14 +218,15 @@ module.exports = function (Groups) {
 	};
 
 	async function updateMemberGroupTitles(oldName, newName) {
+		console.log('YIYAO WANG yiyaowan');
 		function updateTitleArray(groupTitleArray, oldName, newName) {
+			console.log('YIYAO WANG yiyaowan');
 			return groupTitleArray.map(oldTitle => (oldTitle === oldName ? newName : oldTitle));
 		}
 
 		await batch.processSortedSet(`group:${oldName}:members`, async (uids) => {
 			let usersData = await user.getUsersData(uids);
 			usersData = usersData.filter(userData => userData && userData.groupTitleArray.includes(oldName));
-			console.log('YIYAO WANG yiyaowan');
 			usersData.forEach((userData) => {
 				userData.newTitleArray = updateTitleArray(userData.groupTitleArray, oldName, newName);
 			});
