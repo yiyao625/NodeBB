@@ -219,12 +219,16 @@ module.exports = function (Groups) {
 	};
 
 	async function updateMemberGroupTitles(oldName, newName) {
+		function updateTitleArray(groupTitleArray, oldName, newName) {
+			return groupTitleArray.map(oldTitle => (oldTitle === oldName ? newName : oldTitle));
+		}
+
 		await batch.processSortedSet(`group:${oldName}:members`, async (uids) => {
 			let usersData = await user.getUsersData(uids);
 			usersData = usersData.filter(userData => userData && userData.groupTitleArray.includes(oldName));
 
 			usersData.forEach((userData) => {
-				userData.newTitleArray = userData.groupTitleArray.map(oldTitle => (oldTitle === oldName ? newName : oldTitle));
+				userData.newTitleArray = updateTitleArray(userData.groupTitleArray, oldName, newName);
 			});
 
 			await Promise.all(usersData.map(u => user.setUserField(u.uid, 'groupTitle', JSON.stringify(u.newTitleArray))));
